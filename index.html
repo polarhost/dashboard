@@ -1,5 +1,224 @@
-<html>
-  <body>
-    <h1>Dashboard</h1>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PolarHost Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #303030;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: #007BFF;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: white;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .resources, .servers {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .resource-box, .server-box {
+            background-color: #212121;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .resource-box:hover, .server-box:hover {
+            background-color: #2c2c2c;
+            transform: scale(1.05);
+        }
+
+        .resource-box h3, .server-box h3 {
+            margin: 0;
+        }
+
+        .create-server-btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+            margin: auto;
+            width: fit-content;
+        }
+
+        .create-server-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background-color: #303030;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .modal input[type="number"], .modal select {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #444;
+            color: white;
+        }
+
+        .modal button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .modal button:hover {
+            background-color: #0056b3;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PolarHost Dashboard</h1>
+    </div>
+    <div class="container">
+        <div class="resources">
+            <div class="resource-box" id="ram-box">
+                <h3>RAM: <span id="ram-amount">4120 MB</span></h3>
+            </div>
+            <div class="resource-box" id="disk-box">
+                <h3>Disk: <span id="disk-amount">8216 MB</span></h3>
+            </div>
+            <div class="resource-box" id="cpu-box">
+                <h3>CPU: <span id="cpu-amount">75%</span></h3>
+            </div>
+            <div class="resource-box" id="server-slot-box">
+                <h3>Server Slots: <span id="server-slot-amount">1</span></h3>
+            </div>
+            <div class="resource-box" id="server-backup-box">
+                <h3>Server Backups: <span id="server-backup-amount">1</span></h3>
+            </div>
+            <div class="resource-box" id="server-db-box">
+                <h3>Server Databases: <span id="server-db-amount">1</span></h3>
+            </div>
+            <div class="resource-box" id="coins-box">
+                <h3>Coins: <span id="coins-amount">500</span></h3>
+            </div>
+        </div>
+        <a href="#" class="create-server-btn" id="create-server-btn">Create Server</a>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2>Create Server</h2>
+            <label for="server-node">Select Node:</label>
+            <select id="server-node">
+                <option value="philippines">🇵🇭 | Philippines [<span id="ph-slot-amount">1</span>/25]</option>
+                <option value="finland">🇫🇮 | Finland [<span id="fi-slot-amount">0</span>/15]</option>
+            </select>
+            <label for="program-lang">Select Language:</label>
+            <select id="program-lang">
+                <option value="python">Python</option>
+                <option value="nodejs">Node.js</option>
+            </select>
+            <button id="confirm-create">Create Server</button>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const createServerBtn = document.getElementById('create-server-btn');
+        const closeModal = document.getElementById('close-modal');
+        const confirmCreate = document.getElementById('confirm-create');
+        const phSlotAmount = document.getElementById('ph-slot-amount');
+        const fiSlotAmount = document.getElementById('fi-slot-amount');
+
+        createServerBtn.onclick = function() {
+            overlay.style.display = 'flex';
+        }
+
+        closeModal.onclick = function() {
+            overlay.style.display = 'none';
+        }
+
+        confirmCreate.onclick = function() {
+            const selectedNode = document.getElementById('server-node').value;
+            const selectedLang = document.getElementById('program-lang').value;
+
+            if (selectedNode === 'philippines' && parseInt(phSlotAmount.innerText) < 25) {
+                phSlotAmount.innerText = parseInt(phSlotAmount.innerText) + 1;
+                alert(`Server created in ${selectedLang} at Philippines node.`);
+                overlay.style.display = 'none';
+            } else if (selectedNode === 'finland' && parseInt(fiSlotAmount.innerText) < 15) {
+                fiSlotAmount.innerText = parseInt(fiSlotAmount.innerText) + 1;
+                alert(`Server created in ${selectedLang} at Finland node.`);
+                overlay.style.display = 'none';
+            } else {
+                alert('Error: Selected node is full.');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target === overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+    </script>
+</body>
 </html>
